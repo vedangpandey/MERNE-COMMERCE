@@ -1,35 +1,53 @@
-import React from 'react'
+import React, { useState } from 'react'
 import AliceCarousel from 'react-alice-carousel';
 import HomeSectionCard from '../HomeSectionCard/HomeSectionCard';
 import 'react-alice-carousel/lib/alice-carousel.css';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { Button } from '@mui/material';
+import { men_kurta } from '../../../data/men_kurta';
 
 
-const HomeSectionCarosel = () => {
+
+const HomeSectionCarosel = ({data,sectionName}) => {
+    const [activeIndex,setActiveIndex]=useState(0);
     const responsive = {
         0: { items: 1 },
         720: { items: 3 },
         1024: { items: 5.5 },
     };
-    const items=[1,1,1,1,1].map((item)=><HomeSectionCard />)
+    const slidePrev=()=>setActiveIndex(activeIndex-1);
+    const slideNext=()=>setActiveIndex(activeIndex+1)
+
+    const syncActiveIndex=({item})=>setActiveIndex(item)
+    console.log(activeIndex);
+    const items=data.slice(activeIndex,Math.min(activeIndex+10,data.length)).map((item)=><HomeSectionCard product={item} />)
+    console.log(items);
+
   return (
-    <div className='relative px-4 lg:px-8 border'>
-        <div className='relative p-5 '>
+    <div className='border'>
+        <h2 className='text-2xl text-left font-extrabold text-gray-800 py-5'>{sectionName}</h2>
+            <div className='relative p-5 '>
             <AliceCarousel
-            items={items}
-            disableButtonsControls
-            disableDotsControls
-            infinite
-            responsive={responsive}
-            />
-        </div>
-        <Button variant='contained' className='z-50' sx={{position:'absolute',top:"8rem",right:"0rem", transform:"translateX(50%) rotate(90deg)",  bgcolor:"white"}} aria-label="next" >
-        <KeyboardArrowLeftIcon sx={{transform:"rotate(90deg)",color:"black"}} />
-        </Button>
-        <Button variant='contained' className='z-50' sx={{position:'absolute',top:"8rem",left:"0rem", transform:"translateX(-50%) rotate(90deg)",  bgcolor:"white"}} aria-label="next" >
-        <KeyboardArrowLeftIcon sx={{transform:"rotate(-90deg)",color:"black"}} />
-        </Button>
+                items={items}
+                disableButtonsControls
+                responsive={responsive}
+                onSlideChanged={syncActiveIndex}
+                disableDotsControls
+                activeIndex={activeIndex}
+                />
+                {activeIndex !== data.length-5 &&
+                    <Button 
+                    onClick={slideNext}
+                    variant='contained' className='z-50' sx={{position:'absolute',top:"8rem",right:"0rem", transform:"translateX(50%) rotate(90deg)",  bgcolor:"white"}} aria-label="next" >
+                    <KeyboardArrowLeftIcon sx={{transform:"rotate(90deg)",color:"black"}} />
+                </Button>}
+            { activeIndex !== 0 &&
+                <Button 
+                onClick={slidePrev}
+                variant='contained' className='z-50' sx={{position:'absolute',top:"8rem",left:"0rem", transform:"translateX(-50%) rotate(-90deg)",  bgcolor:"white"}} aria-label="next" >
+                <KeyboardArrowLeftIcon sx={{transform:"rotate(90deg)",color:"black"}} />
+                </Button>}
+            </div>
     </div>
   )
 }
